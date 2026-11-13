@@ -45,6 +45,19 @@ export interface EditorUIState {
   previewZoom: number
   mobilePreviewMode: boolean
   showHtmlSource: boolean
+  /** 编辑区在「编辑+预览」分屏中的宽度占比（0.25~0.75，默认 0.5） */
+  editorPaneRatio: number
+}
+
+export const MIN_SPLIT_RATIO = 0.25
+export const MAX_SPLIT_RATIO = 0.75
+export const DEFAULT_SPLIT_RATIO = 0.5
+
+/** 规整持久化的分屏比例：旧数据缺失、非数字或越界时回落到默认值 */
+export function normalizeSplitRatio(value: unknown): number {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return DEFAULT_SPLIT_RATIO
+  if (value < MIN_SPLIT_RATIO || value > MAX_SPLIT_RATIO) return DEFAULT_SPLIT_RATIO
+  return value
 }
 
 export const DEFAULT_UI_STATE: EditorUIState = {
@@ -55,6 +68,7 @@ export const DEFAULT_UI_STATE: EditorUIState = {
   previewZoom: 100,
   mobilePreviewMode: false,
   showHtmlSource: false,
+  editorPaneRatio: DEFAULT_SPLIT_RATIO,
 }
 
 export const STORAGE_KEYS = {

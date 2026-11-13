@@ -11,7 +11,7 @@
 ### 编辑器
 - **CodeMirror 6**：行号、Markdown 语法高亮、代码折叠、搜索替换（`Ctrl+F`）、自动补全、明暗主题
 - **格式化工具栏**：粗体 / 斜体 / 下划线 / 删除线 / 行内代码 / 代码块、标题（工具栏 1–3，快捷键支持 1–6）、列表、引用、链接、图片、表格、数学公式、Mermaid 图表、分割线
-- **实时预览**：分屏同步滚动、缩放（50%–150%）、手机预览、HTML 源码查看、新标签页打开
+- **实时预览**：分屏同步滚动、拖动中间分隔条调整编辑/预览宽度（双击复位、方向键微调）、缩放（50%–150%）、手机预览、HTML 源码查看、新标签页打开
 - **快捷键**：文件、编辑、格式三组，点顶栏键盘图标或按 `Ctrl+/` 查看完整列表
 
 ### 文档管理
@@ -125,7 +125,7 @@ macOS 下 `Ctrl` 对应 `⌘ Command`。
 | --- | --- |
 | `markdown-editor-documents` | 多文档（内容、模板、样式配置、代码主题） |
 | `markdown-editor-recent-files` / `-version-history` | 最近文件 / 版本快照 |
-| `markdown-editor-ui` / `markdown-editor-settings` | 界面状态 / 编辑器设置 |
+| `markdown-editor-ui` / `markdown-editor-settings` | 界面状态（含分栏宽度比例） / 编辑器设置 |
 | `image_host_configs` / `image_history` | 图床配置 / 图片库历史 |
 
 换浏览器或清理站点数据会丢失这些内容，请定期导出备份。

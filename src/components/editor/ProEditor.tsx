@@ -10,6 +10,7 @@ import { TopBar } from './components/TopBar'
 import { FormatToolbar } from './components/FormatToolbar'
 import { WechatCodeEditor } from './components/WechatCodeEditor'
 import { PreviewPane } from './components/PreviewPane'
+import { ResizableSplitter } from './components/ResizableSplitter'
 import { TemplatePanel } from './components/TemplatePanel'
 import { DocumentSidebar } from './components/DocumentSidebar'
 import { StatusBar, computeTextStats } from './components/StatusBar'
@@ -23,7 +24,8 @@ import { VersionHistoryDialog } from './components/dialogs/VersionHistoryDialog'
 import { ShortcutsDialog } from './components/dialogs/ShortcutsDialog'
 import { usePreviewContent } from './hooks/usePreviewContent'
 import { useCopy } from './hooks/useCopy'
-import { uploadImage } from '@/lib/storage'
+import { normalizeSplitRatio, uploadImage } from '@/lib/storage'
+import { cn } from '@/lib/utils'
 import { convertLinksToReferences } from '@/lib/markdown/linkReferences'
 import { exportHtmlFile, exportMarkdownFile, exportWordFile, printWithStyles, wrapStandaloneHtml } from '@/lib/export/exportUtils'
 
@@ -47,6 +49,30 @@ function ProEditorInner() {
     DEFAULT_EDITOR_SETTINGS,
   )
   const importInputRef = useRef<HTMLInputElement>(null)
+  const splitContainerRef = useRef<HTMLDivElement>(null)
+  /** 拖拽中的临时比例：避免拖拽期间其它状态更新把分屏弹回旧值 */
+  const dragRatioRef = useRef<number | null>(null)
+
+  const applySplitColumns = useCallback((r: number) => {
+    const el = splitContainerRef.current
+    if (el) el.style.gridTemplateColumns = `minmax(0, ${r}fr) 6px minmax(0, ${1 - r}fr)`
+  }, [])
+
+  const handleSplitRatioChange = useCallback(
+    (r: number, phase: 'drag' | 'commit') => {
+      if (phase === 'drag') {
+        dragRatioRef.current = r
+        applySplitColumns(r)
+        return
+      }
+      dragRatioRef.current = null
+      store.updateUI({ editorPaneRatio: r })
+      // 宽度变化后让 CodeMirror 重新测量行号、换行与搜索面板
+      view?.requestMeasure()
+    },
+    [store, view, applySplitColumns],
+  )
+
   const [dialog, setDialog] = useState<
     null | 'style' | 'settings' | 'publish' | 'notion' | 'imageManager' | 'versions' | 'shortcuts'
   >(null)
@@ -227,6 +253,8 @@ function ProEditorInner() {
   const stats = computeTextStats(currentDocument.content)
   const versionCount = state.versionHistory[currentDocument.id]?.length ?? 0
   const { ui } = state
+  const showSplitter = ui.previewVisible && !ui.mobilePreviewMode
+  const splitRatio = normalizeSplitRatio(dragRatioRef.current ?? ui.editorPaneRatio)
 
   return (
     <TooltipProvider delayDuration={300}>
@@ -293,9 +321,17 @@ function ProEditorInner() {
             }}
           />
 
-          <div className="flex min-h-0 flex-1">
+          <div
+            ref={splitContainerRef}
+            className={cn('grid min-h-0 flex-1', !showSplitter && 'grid-cols-1')}
+            style={
+              showSplitter
+                ? { gridTemplateColumns: `minmax(0, ${splitRatio}fr) 6px minmax(0, ${1 - splitRatio}fr)` }
+                : undefined
+            }
+          >
             {!ui.mobilePreviewMode && (
-              <div className="min-w-0 flex-1">
+              <div className="min-h-0 min-w-0">
                 <WechatCodeEditor
                   value={currentDocument.content}
                   onChange={store.updateContent}
@@ -304,6 +340,13 @@ function ProEditorInner() {
                   showLineNumbers={editorSettings.showLineNumbers}
                 />
               </div>
+            )}
+            {showSplitter && (
+              <ResizableSplitter
+                ratio={splitRatio}
+                onRatioChange={handleSplitRatioChange}
+                containerRef={splitContainerRef}
+              />
             )}
             {ui.previewVisible && (
               <PreviewPane
@@ -320,7 +363,7 @@ function ProEditorInner() {
                 onCopyWechat={handleCopyWechat}
                 onToggleMobileMode={() => store.updateUI({ mobilePreviewMode: !ui.mobilePreviewMode })}
                 onToggleHtmlSource={() => store.updateUI({ showHtmlSource: !ui.showHtmlSource })}
-                className="flex-1"
+                className="min-h-0 min-w-0 border-l-0"
               />
             )}
           </div>

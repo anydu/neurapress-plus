@@ -17,6 +17,7 @@ import {
   loadVersionHistory,
   migrateLegacyArticles,
   migrateLegacyDraft,
+  normalizeSplitRatio,
   pushVersion,
   saveDocuments,
   saveRecentFiles,
@@ -184,6 +185,8 @@ export function EditorStoreProvider({ children }: { children: React.ReactNode })
     } catch {
       /* 忽略损坏的 UI 数据 */
     }
+    // 旧版本或损坏数据里的分屏比例统一规整，避免布局塌缩
+    ui.editorPaneRatio = normalizeSplitRatio(ui.editorPaneRatio)
 
     let docs = Object.values(documents)
     if (docs.length === 0) {
