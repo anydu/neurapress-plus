@@ -44,6 +44,8 @@ export function baseStylesToString(base: RendererOptions['base'] = {}): string {
   }
   if (base.themeColor) {
     styles.push(`--theme-color: ${base.themeColor}`)
+    // 模板中大量使用 var(--themeColor)（驼峰写法），一并注入
+    styles.push(`--themeColor: ${base.themeColor}`)
   }
 
   return styles.join(';')

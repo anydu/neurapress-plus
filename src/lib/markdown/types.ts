@@ -82,7 +82,7 @@ export interface RendererOptions {
     themeColor?: string
     fontSize?: string
     lineHeight?: string
-    textAlign?: 'left' | 'center' | 'right'
+    textAlign?: 'left' | 'center' | 'right' | 'justify'
     fontFamily?: string
     padding?: string
     margin?: string

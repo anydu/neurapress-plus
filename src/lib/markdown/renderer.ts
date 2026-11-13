@@ -370,6 +370,38 @@ export class MarkdownRenderer {
       const styleStr = cssPropertiesToString(styleOptions)
       return `<del${styleStr ? ` style="${styleStr}"` : ''}>${text}</del>`
     }
+
+    // 表格：注入内联样式（微信公众号要求），否则预览是裸 table 看不出效果
+    this.renderer.tablecell = (token: Tokens.TableCell) => {
+      const tag = token.header ? 'th' : 'td'
+      const cellStyle = {
+        ...(this.options.block?.[tag] || {}),
+        ...(token.align ? { textAlign: token.align } : {}),
+      }
+      // 模板未显式指定表头背景时，跟随模板主题色，让切换模板对表格生效
+      if (tag === 'th' && !cellStyle.background) {
+        cellStyle.background = this.options.base?.themeColor || '#1a1a1a'
+      }
+      const styleStr = cssPropertiesToString(cellStyle)
+      const content = token.tokens?.length
+        ? marked.Parser.parseInline(token.tokens, { renderer: this.renderer })
+        : token.text
+      return `<${tag}${styleStr ? ` style="${styleStr}"` : ''}>${content}</${tag}>`
+    }
+
+    this.renderer.tablerow = ({ text }: Tokens.TableRow) => `<tr>${text}</tr>`
+
+    this.renderer.table = (token: Tokens.Table) => {
+      const rowStyleStr = cssPropertiesToString(this.options.block?.thead || {})
+      const tableStyleStr = cssPropertiesToString(this.options.block?.table || {})
+      const headerCells = token.header.map((cell) => this.renderer.tablecell(cell)).join('')
+      const headerRow = `<thead${rowStyleStr ? ` style="${rowStyleStr}"` : ''}><tr>${headerCells}</tr></thead>`
+      const bodyRows = token.rows
+        .map((row) => `<tr>${row.map((cell) => this.renderer.tablecell(cell)).join('')}</tr>`)
+        .join('')
+      const body = bodyRows ? `<tbody>${bodyRows}</tbody>` : ''
+      return `<table${tableStyleStr ? ` style="${tableStyleStr}"` : ''}>${headerRow}${body}</table>`
+    }
   }
 
   public getRenderer(): typeof marked.Renderer.prototype {

@@ -57,4 +57,7 @@ Thumbs.db
 # Cache directories
 .cache/
 .npm/
-.pnpm-store/ 
+.pnpm-store/
+
+# IDE agent data (local only, not a temp cache — keep the folder, ignore in git)
+.codebuddy/

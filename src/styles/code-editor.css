@@ -1,0 +1,176 @@
+/* CodeMirror 6 主题样式：跟随 shadcn CSS 变量，自动适配明暗模式 */
+
+.pro-code-editor .cm-editor {
+  height: 100%;
+  background: hsl(var(--background));
+  font-size: 14px;
+}
+
+.pro-code-editor .cm-editor.cm-focused {
+  outline: none;
+}
+
+.pro-code-editor .cm-scroller {
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  line-height: 1.7;
+}
+
+/* gutter */
+.pro-code-editor .cm-gutters {
+  background: hsl(var(--muted) / 0.4);
+  border-right: 1px solid hsl(var(--border));
+  color: hsl(var(--muted-foreground));
+}
+
+.pro-code-editor .cm-activeLineGutter {
+  background: hsl(var(--accent));
+  color: hsl(var(--foreground));
+}
+
+.pro-code-editor .cm-activeLine {
+  background: hsl(var(--accent) / 0.35);
+}
+
+.pro-code-editor .cm-lineNumbers .cm-gutterElement {
+  min-width: 40px;
+  padding: 0 8px 0 12px;
+}
+
+/* 选区与光标 */
+.pro-code-editor .cm-cursor,
+.pro-code-editor .cm-dropCursor {
+  border-left: 2px solid hsl(var(--primary));
+}
+
+.pro-code-editor .cm-selectionBackground,
+.pro-code-editor .cm-content ::selection {
+  background: hsl(var(--primary) / 0.2) !important;
+}
+
+.pro-code-editor .cm-focused .cm-selectionBackground {
+  background: hsl(var(--primary) / 0.22) !important;
+}
+
+/* 语法高亮（使用中性色，明暗通用） */
+.pro-code-editor .cm-heading {
+  color: hsl(var(--foreground));
+  font-weight: 700;
+}
+
+.pro-code-editor .cm-emphasis {
+  font-style: italic;
+}
+
+.pro-code-editor .cm-strong {
+  font-weight: 700;
+}
+
+.pro-code-editor .cm-strikethrough {
+  text-decoration: line-through;
+}
+
+.pro-code-editor .cm-link {
+  color: #2563eb;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.pro-code-editor .cm-url {
+  color: hsl(var(--muted-foreground));
+}
+
+.pro-code-editor .cm-code {
+  color: #b45309;
+  background: hsl(var(--muted) / 0.5);
+  border-radius: 3px;
+}
+
+.pro-code-editor .cm-quote {
+  color: hsl(var(--muted-foreground));
+  font-style: italic;
+}
+
+.pro-code-editor .cm-meta {
+  color: hsl(var(--muted-foreground));
+}
+
+.pro-code-editor .cm-keyword {
+  color: #7c3aed;
+}
+
+.pro-code-editor .cm-string {
+  color: #059669;
+}
+
+.pro-code-editor .cm-number,
+.pro-code-editor .cm-atom {
+  color: #0369a1;
+}
+
+.pro-code-editor .cm-comment {
+  color: hsl(var(--muted-foreground));
+  font-style: italic;
+}
+
+.pro-code-editor .cm-def {
+  color: #2563eb;
+}
+
+.pro-code-editor .cm-variable-2 {
+  color: hsl(var(--foreground));
+}
+
+/* 搜索匹配 */
+.pro-code-editor .cm-searchMatch {
+  background: hsl(38 92% 50% / 0.25);
+  outline: 1px solid hsl(38 92% 50% / 0.5);
+}
+
+.pro-code-editor .cm-searchMatch-selected {
+  background: hsl(38 92% 50% / 0.45);
+}
+
+/* 折叠指示器 */
+.pro-code-editor .cm-foldGutter .cm-gutterElement {
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.pro-code-editor .cm-foldGutter .cm-gutterElement:hover {
+  opacity: 1;
+}
+
+/* 搜索面板 */
+.pro-code-editor .cm-panel.cm-search {
+  padding: 6px 10px;
+  background: hsl(var(--muted) / 0.4);
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.pro-code-editor .cm-panel.cm-search label {
+  color: hsl(var(--muted-foreground));
+  font-size: 12px;
+}
+
+.pro-code-editor .cm-panel.cm-search input,
+.pro-code-editor .cm-panel.cm-search button {
+  background: hsl(var(--background));
+  border: 1px solid hsl(var(--border));
+  border-radius: 4px;
+  color: hsl(var(--foreground));
+  padding: 2px 6px;
+  font-size: 12px;
+}
+
+.pro-code-editor .cm-panel.cm-search button:hover {
+  background: hsl(var(--accent));
+}
+
+/* 提示/自动补全面板 */
+.pro-code-editor .cm-tooltip {
+  background: hsl(var(--popover));
+  border: 1px solid hsl(var(--border));
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+}

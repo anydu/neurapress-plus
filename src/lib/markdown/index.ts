@@ -29,19 +29,26 @@ export const defaultOptions: RendererOptions = {
     },
     table: {
       width: '100%',
-      marginBottom: '1em',
       borderCollapse: 'collapse',
-      fontSize: '14px'
+      margin: '20px 0',
+      background: '#fff',
+      borderRadius: '8px',
+      overflow: 'hidden',
+      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+      fontSize: '15px'
     },
+    // th 背景不写死：由渲染器按模板/用户主题色注入（切换模板表格即跟随变化）
     th: {
-      padding: '0.5em 1em',
-      borderBottom: '2px solid var(--theme-color)',
+      color: '#fff',
+      fontWeight: 'bold',
+      padding: '15px 12px',
       textAlign: 'left',
-      fontWeight: 'bold'
+      fontSize: '15px'
     },
     td: {
-      padding: '0.5em 1em',
-      borderBottom: '1px solid #eee'
+      padding: '12px',
+      borderBottom: '1px solid #eee',
+      fontSize: '15px'
     },
     footnotes: {
       marginTop: '2em',
@@ -71,10 +78,20 @@ export const defaultOptions: RendererOptions = {
   }
 }
 
+/** 表格相关样式键：逐键合并，避免模板只定义 td 时 th/table 丢掉默认属性 */
+const TABLE_STYLE_KEYS = ['table', 'thead', 'th', 'td'] as const
+
 export function convertToWechat(markdown: string, options: RendererOptions = defaultOptions): string {
+  const block: NonNullable<RendererOptions['block']> = {
+    ...defaultOptions.block,
+    ...options.block,
+  }
+  for (const key of TABLE_STYLE_KEYS) {
+    block[key] = { ...defaultOptions.block?.[key], ...options.block?.[key] }
+  }
   const mergedOptions = {
     base: { ...defaultOptions.base, ...options.base },
-    block: { ...defaultOptions.block, ...options.block },
+    block,
     inline: { ...defaultOptions.inline, ...options.inline },
     codeTheme: options.codeTheme || 'github'
   }
