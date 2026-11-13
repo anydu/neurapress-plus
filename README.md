@@ -1,157 +1,145 @@
-# NeuraPress
+# NeuraPress Plus
 
-NeuraPress 是一个现代化的 Markdown 编辑器，专注于提供优质的微信公众号排版体验。响应式设计，支持移动设备。搭配 DeepSeek和微信公众号助手使用，碎片时间也能用手机发有排版的文章了。
+面向微信公众号作者的 Markdown 排版编辑器：左侧写 Markdown，右侧实时预览，一键复制带排版的内容到公众号。
 
-最新链接 [Markdown Editor](https://md.newkit.site/) ，更多工具请访问[NewKit](https://www.newkit.site/)
+![NeuraPress Plus 编辑器界面](public/assets/img/editor-preview.png)
 
-![NeuraPress Website image](/public/assets/img/neurapress-web-app.jpg)
+本项目是开源版 NeuraPress 的**本地重构版**：以 [NeuraPress Pro](https://md.newkit.site/) 的交互为参照，重写了编辑器内核（CodeMirror 6）、数据层、模板系统与整个编辑器外壳。全部功能在浏览器本地运行，**没有后端服务、没有数据库、不需要登录**。
 
-## 特性
+## ✨ 功能
 
-- 🎨 实时预览 - 所见即所得的编辑体验
-- 📱 移动端支持 - 支持手机上直接编辑，搭配 DeepSeek和微信公众号助手使用
-- 🎯 微信风格 - 完美适配微信公众号样式
-- 🔧 样式定制 - 灵活的样式配置选项
-- 📋 一键复制 - 支持复制带格式的预览内容
-- 🎭 模板系统 - 内置多种排版模板，一键切换
-- 🚀 快速高效 - 基于 Next.js 构建，性能优异
+### 编辑器
+- **CodeMirror 6**：行号、Markdown 语法高亮、代码折叠、搜索替换（`Ctrl+F`）、自动补全、明暗主题
+- **格式化工具栏**：粗体 / 斜体 / 下划线 / 删除线 / 行内代码 / 代码块、标题（工具栏 1–3，快捷键支持 1–6）、列表、引用、链接、图片、表格、数学公式、Mermaid 图表、分割线
+- **实时预览**：分屏同步滚动、缩放（50%–150%）、手机预览、HTML 源码查看、新标签页打开
+- **快捷键**：文件、编辑、格式三组，点顶栏键盘图标或按 `Ctrl+/` 查看完整列表
 
-## 快速开始
+### 文档管理
+- 多文档 + 自动保存，最近文件带打开时间与大小
+- 侧边栏 **Files / Outline / History** 三个标签页：
+  - Files：文件搜索、当前文档卡片（保存 / 另存为 / 导出 / 导入）、最近文件、全部文档
+  - Outline：标题大纲 + 行号，点击跳转到编辑器对应行
+  - History：自动版本快照，一键恢复
+- 导入：本地 `.md` 文件、Notion 导出文件（zip / md）
+
+### 模板与样式
+- **22 款模板 / 11 个分类**：搜索、收藏、卡片实时预览
+- **样式配置**：30 色主题色板 + 自定义 HEX、字号、行高、文本对齐、5 种代码主题
+- 表格、代码块、公式、链接等均生成微信可用的**内联样式**；表格表头跟随模板主题色
+
+### 导出与图片
+- **复制到公众号**（带排版，可把外链转成底部引用）
+- 导出 **HTML / Word / PDF（打印） / Markdown**
+- **图片管理弹窗**：拖拽或点击上传、图片链接、图片库（上传历史）、图床设置；未配置图床时以 base64 内嵌
+
+### 其它
+- AI 助手：OpenAI 兼容协议，API Key 仅存本地，提供润色 / 翻译等快捷指令
+- 状态栏：字符 / 词数 / 阅读时长 / 版本数 / 最后更新 / 在线状态
+- 明暗主题、落地页、帮助页、关于页；`/xiaohongshu` 小红书笔记编辑器
+
+> **说明**：AI 助手需自行配置兼容 OpenAI 的接口；「多平台发布」为平台入口提示，未接入 Pro 站的私有浏览器扩展；`/xiaohongshu` 保留原有 tiptap 实现，与 `/wechat` 的 CodeMirror 编辑器是两套代码。
+
+## 🚀 快速开始
 
 ### 环境要求
-
-- Node.js 18+
+- Node.js 18.17+（推荐 20）
 - pnpm 8+
 
-### 安装
+### 本地开发
 
 ```bash
-# 克隆项目
-git clone https://github.com/tianyaxiang/neurapress.git
-
-# 进入项目目录
-cd neurapress
-
-# 安装依赖
+git clone https://github.com/anydu/neurapress-plus.git
+cd neurapress-plus
 pnpm install
-
-# 启动开发服务器
 pnpm dev
 ```
 
-### 构建
+打开 <http://localhost:3000/wechat> 进入编辑器；<http://localhost:3000/> 为落地页。
+
+### 构建与运行
 
 ```bash
-# 构建生产版本
-pnpm build
-
-# 启动生产服务器
-pnpm start
+pnpm build      # 生产构建
+pnpm start      # 启动生产服务器
 ```
 
-### 使用 Docker
+## 🐳 Docker
 
-我们提供了两种 Docker 环境配置：开发环境和生产环境。所有 Docker 相关文件都位于 `docker` 目录下。
-
-#### 开发环境
-
-使用 Docker Compose 启动开发环境（支持热重载）：
+`docker/` 目录提供两套配置：
 
 ```bash
-# 启动开发环境
-docker compose -f docker/docker-compose.yml up
-
-# 在后台运行
+# 开发环境：Dockerfile.dev + 源码挂载 + pnpm dev（支持热重载）
 docker compose -f docker/docker-compose.yml up -d
 
-# 停止服务
-docker compose -f docker/docker-compose.yml down
-```
-
-#### 生产环境
-
-```bash
-# 构建生产镜像
+# 生产环境：多阶段构建 + pnpm start
 docker build -t neurapress:prod -f docker/Dockerfile.prod .
-
-# 运行生产容器
 docker run -p 3000:3000 neurapress:prod
 ```
 
-#### 发布到 Docker Hub
+> - 生产构建的上下文是**项目根目录**，而仓库目前只有 `docker/.dockerignore`（不会被 Docker 读取）。建议在项目根添加 `.dockerignore` 后再构建，避免把 `node_modules`、`.next` 打进上下文；`Dockerfile.prod` 使用 BuildKit 缓存挂载，需 `DOCKER_BUILDKIT=1`。
+> - 应用没有服务端 API：部署到 NAS 或静态托管只是托管页面，**文档数据保存在访问者浏览器的 localStorage**，换设备不共享、清缓存会丢失。重要内容请用「导出 Markdown / HTML」备份。
 
-```bash
-# 登录到 Docker Hub
-docker login
+## 📁 目录结构
 
-# 构建并标记镜像
-docker build -t [your-dockerhub-username]/neurapress:latest -f docker/Dockerfile.prod .
-
-# 推送到 Docker Hub
-docker push [your-dockerhub-username]/neurapress:latest
+```
+src/app/                        页面：/、/wechat、/xiaohongshu、/help、/about
+src/components/editor/
+  ProEditor.tsx                 编辑器外壳、全局快捷键、弹窗编排
+  components/                   顶栏、工具栏、侧边栏、预览、状态栏、模板面板、AI 面板
+  components/dialogs/           样式配置、编辑器设置、图片管理、版本历史、发布、Notion 导入、快捷键
+  hooks/                        预览转换、复制、AI 等
+  store/EditorStore.tsx         文档 / UI 状态（Context + reducer）
+src/lib/
+  markdown/                     Markdown → 微信内联样式 HTML（marked / KaTeX / Mermaid）
+  editor/formatCommands.ts      CodeMirror 格式化命令与快捷键
+  storage/                      文档、最近文件、版本历史、图床、图片库持久化
+  export/                       HTML / Word / Markdown / 打印 PDF
+  ai/                           OpenAI 兼容服务
+src/templates/                  22 款模板注册表与分类
+src/config/                     代码主题、兼容 shim
+src/styles/                     编辑器样式
+public/assets/img/              产品截图等静态资源
+docker/                         开发与生产 Docker 配置
 ```
 
-#### 从 Docker Hub 拉取和运行
+## ⌨️ 常用快捷键
 
-```bash
-# 拉取镜像
-docker pull [your-dockerhub-username]/neurapress:latest
+macOS 下 `Ctrl` 对应 `⌘ Command`。
 
-# 运行容器
-docker run -p 3000:3000 [your-dockerhub-username]/neurapress:latest
-```
+| 分类 | 快捷键 | 功能 |
+| --- | --- | --- |
+| 文件 | `Ctrl+S` / `Ctrl+Shift+S` | 保存 / 另存为 |
+| 文件 | `Ctrl+N` / `Ctrl+O` / `Ctrl+E` | 新建 / 导入 / 导出 HTML |
+| 文件 | `Ctrl+Shift+P` / `Ctrl+/` | 显示隐藏预览 / 快捷键面板 |
+| 编辑 | `Ctrl+F` / `Ctrl+Z` | 搜索替换 / 撤销 |
+| 格式 | `Ctrl+B` / `Ctrl+I` / `Ctrl+U` | 粗体 / 斜体 / 下划线 |
+| 格式 | `Ctrl+1` ~ `Ctrl+6` | 一至六级标题 |
+| 格式 | `Ctrl+K` / `Ctrl+Shift+T` / `Ctrl+Shift+I` | 链接 / 表格 / 图片管理 |
+| 格式 | `Ctrl+Shift+C` / `Ctrl+Shift+M` | 代码块 / 数学公式块 |
 
-注意：
-- 使用 Docker Hub 时，请将 `[your-dockerhub-username]` 替换为你的 Docker Hub 用户名
+## 💾 本地数据
 
-## 使用指南
+所有数据存在浏览器 `localStorage`，主要键名：
 
-1. **编辑内容**
-   - 左侧为 Markdown 编辑区
-   - 支持标准 Markdown 语法
-   - 支持 GFM (GitHub Flavored Markdown)
+| 键 | 内容 |
+| --- | --- |
+| `markdown-editor-documents` | 多文档（内容、模板、样式配置、代码主题） |
+| `markdown-editor-recent-files` / `-version-history` | 最近文件 / 版本快照 |
+| `markdown-editor-ui` / `markdown-editor-settings` | 界面状态 / 编辑器设置 |
+| `image_host_configs` / `image_history` | 图床配置 / 图片库历史 |
 
-2. **预览内容**
-   - 右侧为实时预览区
-   - 展示最终在微信中的显示效果
-   - 可以切换预览窗口的显示/隐藏
+换浏览器或清理站点数据会丢失这些内容，请定期导出备份。
 
-3. **样式设置**
-   - 使用样式选择器选择预设模板
-   - 通过样式配置对话框自定义样式
-   - 支持自定义字体、颜色、间距等属性
+## 🛠 技术栈
 
-4. **复制内容**
-   - 点击"复制源码"获取 HTML 源码
-   - 点击"复制预览"获取带格式的预览内容
-   - 直接粘贴到微信公众号编辑器中使用
+- **框架**：Next.js 14（App Router）、React 18、TypeScript 5
+- **UI**：Tailwind CSS 3、Radix UI（本地封装组件）、lucide-react、next-themes
+- **编辑器**：CodeMirror 6（`@codemirror/*`）
+- **渲染**：marked 16、KaTeX、Mermaid 11、Prism 代码高亮
+- **其它**：JSZip（Notion 导入）、clipboard-polyfill、pnpm
 
-## 技术栈
+## 致谢与许可
 
-- Next.js 14
-- React
-- TypeScript
-- Tailwind CSS
-- ByteMD
-- Marked
-- shadcn/ui
+本项目基于 [tianyaxiang/neurapress](https://github.com/tianyaxiang/neurapress) 开源版重构，编辑器交互参照 [NeuraPress Pro](https://md.newkit.site/)。
 
-## 🌐 联系我们
-
- [Email](mailto:tianyaxiang@qq.com) | [Twitter](https://x.com/tianyaxiang)
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=tianyaxiang/neurapress&type=date&legend=top-left)](https://www.star-history.com/#tianyaxiang/neurapress&type=date&legend=top-left)
-
-## 贡献指南
-
-欢迎提交 Issue 和 Pull Request。在提交 PR 之前，请确保：
-
-1. 代码通过 ESLint 检查
-2. 新功能包含适当的测试
-3. 更新相关文档
-
-## 许可证
-
-[MIT License](LICENSE)
+基于 [MIT License](LICENSE) 开源。问题与建议请提交到本仓库的 Issues。

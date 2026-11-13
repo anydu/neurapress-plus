@@ -20,7 +20,7 @@ const LoadingLogo = () => (
   </div>
 )
 
-// Pro 编辑器包含 CodeMirror 与浏览器 API，关闭 SSR
+// 编辑器包含 CodeMirror 与浏览器 API，关闭 SSR
 const ProEditor = dynamic(() => import('@/components/editor/ProEditor'), {
   ssr: false,
   loading: () => <LoadingLogo />,

@@ -11,7 +11,7 @@ import { GoogleAnalytics } from '@/components/GoogleAnalytics'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'NeuraPress Pro - 专业的公众号 Markdown 编辑器',
+  title: 'NeuraPress Plus - 专业的公众号 Markdown 编辑器',
   description: '专业的公众号 Markdown 编辑器：多文档管理、版本历史、精美模板、AI 助手、一键导出',
   icons: {
     icon: [

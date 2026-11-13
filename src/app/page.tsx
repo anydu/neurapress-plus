@@ -61,7 +61,7 @@ const features = [
 const platforms = [
   {
     name: '微信公众号',
-    description: 'Pro 式专业编辑器：CodeMirror 内核、实时预览、样式配置、外链转底部引用',
+    description: '专业编辑器：CodeMirror 内核、实时预览、样式配置、外链转底部引用',
     href: '/wechat',
     color: 'bg-emerald-500'
   },
@@ -99,7 +99,7 @@ export default function Home() {
           <div className="mx-auto max-w-4xl text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border bg-background/80 px-4 py-1.5 text-sm text-muted-foreground shadow-sm backdrop-blur">
               <Sparkles className="h-4 w-4 text-primary" />
-              全新 Pro 编辑器 · CodeMirror 内核 · AI 助手
+              NeuraPress Plus · CodeMirror 内核 · AI 助手
             </div>
             <div className="mb-6 flex justify-center">
               <Logo className="h-16 w-16 text-primary" />
@@ -132,8 +132,8 @@ export default function Home() {
             <div className="rounded-2xl border bg-background/70 p-2 shadow-2xl backdrop-blur transition-transform duration-500 hover:scale-[1.01]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/assets/img/neurapress-web-app.jpg"
-                alt="NeuraPress 编辑器界面"
+                src="/assets/img/editor-preview.png"
+                alt="NeuraPress Plus 编辑器界面"
                 className="w-full rounded-xl border"
               />
             </div>

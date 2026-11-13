@@ -21,7 +21,7 @@ interface AdBannerProps {
 const AdBanner = React.forwardRef<HTMLDivElement, AdBannerProps>(
   ({ 
     id = "default-ad",
-    imageUrl = "/assets/img/neurapress-web-app.jpg", 
+    imageUrl = "/assets/img/editor-preview.png",
     title = "NeuraPress - 让 Markdown 编辑更简单",
     description = "专业的 Markdown 编辑器，支持微信公众号、小红书等多平台格式导出",
     linkUrl = "#",

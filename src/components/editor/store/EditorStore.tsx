@@ -32,7 +32,7 @@ import {
 import type { RendererOptions } from '@/lib/markdown'
 import type { CodeThemeId } from '@/config/code-themes'
 
-const WELCOME_CONTENT = `# 欢迎使用 NeuraPress
+const WELCOME_CONTENT = `# 欢迎使用 NeuraPress Plus
 
 专业的公众号 Markdown 编辑器，开始编写你的文章吧！
 
@@ -135,7 +135,7 @@ function reducer(state: EditorStoreState, action: EditorStoreAction): EditorStor
 }
 
 function createWelcomeDoc(): EditorDocument {
-  return createDocument({ title: '欢迎使用 NeuraPress', content: WELCOME_CONTENT })
+  return createDocument({ title: '欢迎使用 NeuraPress Plus', content: WELCOME_CONTENT })
 }
 
 interface EditorStoreContextValue {
