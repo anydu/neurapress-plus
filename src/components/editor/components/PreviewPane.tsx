@@ -33,6 +33,11 @@ interface PreviewPaneProps {
 /** 手机预览容器宽度（模拟公众号正文宽度） */
 const MOBILE_WIDTH = 390
 
+/**
+ * 预览区：与编辑区平级的独立右列。
+ * 自带工具条（缩放 / 复制 / 手机预览 / HTML 源码 / 新标签页），
+ * 高度用 h-9 与左侧 FormatToolbar 对齐，保证两列内容区从同一高度开始。
+ */
 export function PreviewPane({
   previewRef,
   previewScrollRef,
@@ -85,14 +90,11 @@ export function PreviewPane({
   return (
     <div
       ref={previewRef}
-      className={cn(
-        'preview-container flex h-full min-w-0 flex-col border-l bg-background',
-        className,
-      )}
+      className={cn('preview-container flex h-full min-w-0 flex-col bg-background', className)}
       data-testid="preview-pane"
     >
-      {/* 预览工具条 */}
-      <div className="flex items-center justify-between border-b bg-background/95 px-3 py-1.5 backdrop-blur">
+      {/* 预览工具条：与左侧编辑工具条等高（h-9）并排 */}
+      <div className="flex h-9 shrink-0 items-center justify-between border-b bg-background/95 px-3 backdrop-blur">
         <div className="flex items-center gap-0.5">
           <span className="text-xs font-medium text-muted-foreground">预览</span>
         </div>
@@ -152,7 +154,7 @@ export function PreviewPane({
       </div>
 
       {/* 预览内容 */}
-      <div ref={previewScrollRef} className="flex-1 overflow-y-auto">
+      <div ref={previewScrollRef} className="min-h-0 flex-1 overflow-y-auto">
         {isConverting ? (
           <div className="flex h-40 flex-col items-center justify-center gap-2 text-muted-foreground">
             <Loader2 className="h-5 w-5 animate-spin" />

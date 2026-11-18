@@ -24,10 +24,10 @@ import { VersionHistoryDialog } from './components/dialogs/VersionHistoryDialog'
 import { ShortcutsDialog } from './components/dialogs/ShortcutsDialog'
 import { usePreviewContent } from './hooks/usePreviewContent'
 import { useCopy } from './hooks/useCopy'
-import { normalizeSplitRatio, uploadImage } from '@/lib/storage'
+import { normalizeSplitRatio } from '@/lib/storage'
 import { cn } from '@/lib/utils'
 import { convertLinksToReferences } from '@/lib/markdown/linkReferences'
-import { exportHtmlFile, exportMarkdownFile, exportWordFile, printWithStyles, wrapStandaloneHtml } from '@/lib/export/exportUtils'
+import { exportHtmlFile, exportMarkdownFile, exportWordFile, printWithStyles } from '@/lib/export/exportUtils'
 
 /** 编辑器设置（对齐 Pro 的「编辑器设置」弹窗） */
 interface EditorSettings {
@@ -95,7 +95,6 @@ function ProEditorInner() {
 
   const previewRef = useRef<HTMLDivElement>(null)
   const previewScrollRef = useRef<HTMLDivElement>(null)
-  const uploadInputRef = useRef<HTMLInputElement>(null)
 
   const { isConverting, previewContent } = usePreviewContent({
     value: currentDocument?.content ?? '',
@@ -130,32 +129,6 @@ function ProEditorInner() {
     const ratio = scroller.scrollTop / Math.max(1, scroller.scrollHeight - scroller.clientHeight)
     preview.scrollTop = ratio * Math.max(0, preview.scrollHeight - preview.clientHeight)
   }, [])
-
-  // ---------- 图片上传 ----------
-  const handleUploadImage = useCallback(
-    async (file: File) => {
-      try {
-        const url = await uploadImage(file)
-        if (view) {
-          const { from, to } = view.state.selection.main
-          view.dispatch({
-            changes: { from, to, insert: `![${file.name}](${url})` },
-            selection: { anchor: from + `![${file.name}](${url})`.length },
-          })
-          view.focus()
-        }
-        toast({ title: '图片已插入', description: file.name })
-      } catch (error) {
-        console.error('图片上传失败:', error)
-        toast({
-          variant: 'destructive',
-          title: '图片上传失败',
-          description: error instanceof Error ? error.message : '请重试',
-        })
-      }
-    },
-    [view, toast],
-  )
 
   // ---------- 导入 .md 文件（⌘O / 侧边栏「导入」） ----------
   const handleImportMarkdown = useCallback(
@@ -300,38 +273,26 @@ function ProEditorInner() {
           />
         )}
 
-        <div className="flex min-w-0 flex-1 flex-col">
-          <FormatToolbar
-            view={view}
-            onUploadImage={() => uploadInputRef.current?.click()}
-            onOpenImageManager={() => {
-              setImageManagerTab('upload')
-              setDialog('imageManager')
-            }}
-            onCopyWechat={handleCopyWechat}
-            onMobilePreview={() => store.updateUI({ mobilePreviewMode: !ui.mobilePreviewMode })}
-            onShowHtml={() => store.updateUI({ showHtmlSource: !ui.showHtmlSource })}
-            onOpenInNewTab={() => {
-              const blob = new Blob([wrapStandaloneHtml(finalPreviewHtml, currentDocument.title)], {
-                type: 'text/html;charset=utf-8',
-              })
-              const url = URL.createObjectURL(blob)
-              window.open(url, '_blank')
-              setTimeout(() => URL.revokeObjectURL(url), 10_000)
-            }}
-          />
-
-          <div
-            ref={splitContainerRef}
-            className={cn('grid min-h-0 flex-1', !showSplitter && 'grid-cols-1')}
-            style={
-              showSplitter
-                ? { gridTemplateColumns: `minmax(0, ${splitRatio}fr) 6px minmax(0, ${1 - splitRatio}fr)` }
-                : undefined
-            }
-          >
-            {!ui.mobilePreviewMode && (
-              <div className="min-h-0 min-w-0">
+        {/* 编辑列与预览列完全平级：各自带工具条，分隔条贯穿整列高度 */}
+        <div
+          ref={splitContainerRef}
+          className={cn('grid min-h-0 min-w-0 flex-1', !showSplitter && 'grid-cols-1')}
+          style={
+            showSplitter
+              ? { gridTemplateColumns: `minmax(0, ${splitRatio}fr) 6px minmax(0, ${1 - splitRatio}fr)` }
+              : undefined
+          }
+        >
+          {!ui.mobilePreviewMode && (
+            <div className="flex min-h-0 min-w-0 flex-col">
+              <FormatToolbar
+                view={view}
+                onOpenImageManager={() => {
+                  setImageManagerTab('upload')
+                  setDialog('imageManager')
+                }}
+              />
+              <div className="min-h-0 flex-1">
                 <WechatCodeEditor
                   value={currentDocument.content}
                   onChange={store.updateContent}
@@ -340,33 +301,33 @@ function ProEditorInner() {
                   showLineNumbers={editorSettings.showLineNumbers}
                 />
               </div>
-            )}
-            {showSplitter && (
-              <ResizableSplitter
-                ratio={splitRatio}
-                onRatioChange={handleSplitRatioChange}
-                containerRef={splitContainerRef}
-              />
-            )}
-            {ui.previewVisible && (
-              <PreviewPane
-                previewRef={previewRef}
-                previewScrollRef={previewScrollRef}
-                previewContent={finalPreviewHtml}
-                isConverting={isConverting}
-                templateId={currentDocument.template}
-                codeTheme={currentDocument.codeTheme}
-                zoom={ui.previewZoom}
-                mobileMode={ui.mobilePreviewMode}
-                showHtmlSource={ui.showHtmlSource}
-                onZoomChange={(zoom) => store.updateUI({ previewZoom: zoom })}
-                onCopyWechat={handleCopyWechat}
-                onToggleMobileMode={() => store.updateUI({ mobilePreviewMode: !ui.mobilePreviewMode })}
-                onToggleHtmlSource={() => store.updateUI({ showHtmlSource: !ui.showHtmlSource })}
-                className="min-h-0 min-w-0 border-l-0"
-              />
-            )}
-          </div>
+            </div>
+          )}
+          {showSplitter && (
+            <ResizableSplitter
+              ratio={splitRatio}
+              onRatioChange={handleSplitRatioChange}
+              containerRef={splitContainerRef}
+            />
+          )}
+          {ui.previewVisible && (
+            <PreviewPane
+              previewRef={previewRef}
+              previewScrollRef={previewScrollRef}
+              previewContent={finalPreviewHtml}
+              isConverting={isConverting}
+              templateId={currentDocument.template}
+              codeTheme={currentDocument.codeTheme}
+              zoom={ui.previewZoom}
+              mobileMode={ui.mobilePreviewMode}
+              showHtmlSource={ui.showHtmlSource}
+              onZoomChange={(zoom) => store.updateUI({ previewZoom: zoom })}
+              onCopyWechat={handleCopyWechat}
+              onToggleMobileMode={() => store.updateUI({ mobilePreviewMode: !ui.mobilePreviewMode })}
+              onToggleHtmlSource={() => store.updateUI({ showHtmlSource: !ui.showHtmlSource })}
+              className="min-h-0 min-w-0"
+            />
+          )}
         </div>
 
         {ui.templatePanelOpen && (
@@ -394,19 +355,6 @@ function ProEditorInner() {
         aiOpen={aiOpen}
         onToggleAi={() => setAiOpen(!aiOpen)}
         onToggleVersionHistory={() => setDialog('versions')}
-      />
-
-      {/* 隐藏的图片上传入口 */}
-      <input
-        ref={uploadInputRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={(e) => {
-          const file = e.target.files?.[0]
-          if (file) handleUploadImage(file)
-          e.target.value = ''
-        }}
       />
 
       {/* 隐藏的 Markdown 导入入口（⌘O / 侧边栏「导入」） */}

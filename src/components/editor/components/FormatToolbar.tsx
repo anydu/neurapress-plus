@@ -19,10 +19,6 @@ import {
   Table,
   Sigma,
   GitBranch,
-  Copy,
-  Smartphone,
-  FileCode2,
-  ExternalLink,
   Minus,
 } from 'lucide-react'
 import {
@@ -36,13 +32,8 @@ import { cn } from '@/lib/utils'
 
 interface FormatToolbarProps {
   view: EditorView | null
-  onUploadImage?: () => void
   /** 打开图片管理弹窗（对齐 Pro：上传 / 图片链接 / 图片库 / 图床设置） */
   onOpenImageManager?: () => void
-  onCopyWechat?: () => void
-  onMobilePreview?: () => void
-  onShowHtml?: () => void
-  onOpenInNewTab?: () => void
   className?: string
 }
 
@@ -82,14 +73,15 @@ const INSERT_GROUP: ToolItem[] = [
   { icon: Minus, title: '分割线', command: 'hr' },
 ]
 
+const ICON_BUTTON_CLASS =
+  'inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:opacity-50'
+
 function ToolButton({
   item,
   view,
-  disabled,
 }: {
   item: ToolItem
   view: EditorView | null
-  disabled?: boolean
 }) {
   const Icon = item.icon
   return (
@@ -97,7 +89,6 @@ function ToolButton({
       <TooltipTrigger asChild>
         <button
           type="button"
-          disabled={disabled}
           onClick={() => {
             if (item.action) {
               item.action()
@@ -105,11 +96,7 @@ function ToolButton({
               formatCommands[item.command](view)
             }
           }}
-          className={cn(
-            'inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground',
-            'transition-colors hover:bg-accent hover:text-foreground',
-            'disabled:pointer-events-none disabled:opacity-50',
-          )}
+          className={ICON_BUTTON_CLASS}
         >
           <Icon className="h-4 w-4" />
         </button>
@@ -125,40 +112,27 @@ function GroupDivider() {
   return <div className="mx-1 h-4 w-px shrink-0 bg-border" aria-hidden />
 }
 
+/**
+ * 编辑工具条：属于左侧编辑器列，只保留格式化命令。
+ * 预览相关的缩放 / 复制 / 手机预览 / HTML 源码 / 新标签页由右侧预览工具条承担。
+ */
 export function FormatToolbar({
   view,
-  onUploadImage,
   onOpenImageManager,
-  onCopyWechat,
-  onMobilePreview,
-  onShowHtml,
-  onOpenInNewTab,
   className,
 }: FormatToolbarProps) {
-  /** 图片插入独立成 action（打开图片管理弹窗） */
+  /** 图片插入独立成 action（打开图片管理弹窗：上传 / 链接 / 图片库 / 图床设置） */
   const insertGroup: ToolItem[] = [
     INSERT_GROUP[0],
     { icon: Image, title: '插入图片 (Ctrl+Shift+I)', action: onOpenImageManager },
     ...INSERT_GROUP.slice(1),
   ]
 
-  const rightGroup: ToolItem[] = [
-    {
-      icon: UploadIconWrap,
-      title: '上传图片',
-      action: onUploadImage,
-    },
-    { icon: Copy, title: '复制到公众号 - 生成适合微信公众号的格式', action: onCopyWechat },
-    { icon: Smartphone, title: '移动预览模式', action: onMobilePreview },
-    { icon: FileCode2, title: '显示 HTML 源码', action: onShowHtml },
-    { icon: ExternalLink, title: '在新标签页中打开', action: onOpenInNewTab },
-  ].filter((i) => i.action)
-
   return (
     <TooltipProvider delayDuration={300}>
       <div
         className={cn(
-          'flex h-9 w-full items-center border-b bg-background/95 px-2 backdrop-blur',
+          'flex h-9 w-full shrink-0 items-center overflow-x-auto border-b bg-background/95 px-2 backdrop-blur',
           className,
         )}
         data-testid="format-toolbar"
@@ -178,17 +152,7 @@ export function FormatToolbar({
         {insertGroup.map((item) => (
           <ToolButton key={item.title} item={item} view={view} />
         ))}
-        <GroupDivider />
-        <div className="flex-1" />
-        {rightGroup.map((item) => (
-          <ToolButton key={item.title} item={item} view={view} disabled={!item.action} />
-        ))}
       </div>
     </TooltipProvider>
   )
-}
-
-/* 上传按钮的占位图标（真实上传逻辑由外部注入） */
-function UploadIconWrap({ className }: { className?: string }) {
-  return <Image className={className} />
 }
